@@ -86,13 +86,20 @@ export default function ChatPage() {
             meta: {
               grounding_score: ev.grounding_score,
               timings: ev.timings,
+              exact_citation: ev.exact_citation,
+              corpus_version: ev.corpus_version,
             },
           }));
         } else if (ev.type === "refused") {
           patch((m) => ({
             ...m,
             content: "",
-            meta: { grounding_score: ev.grounding_score, timings: [], refused: true },
+            meta: {
+              grounding_score: ev.grounding_score,
+              timings: [],
+              refused: true,
+              refusal_reason: ev.reason,
+            },
           }));
         } else if (ev.type === "done") {
           patch((m) => ({
@@ -100,7 +107,10 @@ export default function ChatPage() {
             meta: {
               grounding_score: m.meta?.grounding_score ?? 0,
               timings: m.meta?.timings ?? [],
+              exact_citation: m.meta?.exact_citation,
+              corpus_version: m.meta?.corpus_version,
               citations: ev.citations,
+              warning: ev.warning,
               first_token_ms: ev.first_token_ms,
               total_ms: ev.total_ms,
             },
@@ -178,7 +188,7 @@ export default function ChatPage() {
           </div>
         </div>
         <p className="mt-2 text-center text-[11px] text-ink-500">
-          Grounded in 29 CFR (eCFR) + OSHA publications · answers include verifiable citations · not legal advice
+          Grounded in 29 CFR (eCFR) + OSHA publications{appCfg?.corpus?.version && appCfg.corpus.version !== "unknown" ? ` · corpus ${appCfg.corpus.version}` : ""} · answers include verifiable citations · not legal advice
         </p>
       </div>
 
@@ -196,10 +206,11 @@ function AssistantMessage({ msg, onCite }: { msg: ChatMessage; onCite: (id: stri
   const meta = msg.meta;
 
   if (meta?.refused) {
+    const outside = meta.refusal_reason === "out_of_domain" || meta.refusal_reason === "weak_evidence";
     return (
       <div className="animate-fade-up rounded-2xl border border-danger/25 bg-danger/[0.06] p-4">
         <div className="flex items-center gap-2 text-[13px] font-semibold text-danger">
-          <OctagonAlert size={15} /> Refused — outside grounding threshold
+          <OctagonAlert size={15} /> {outside ? "Outside the corpus scope" : "Refused — insufficient grounding"}
           <span className="font-mono text-[11px] font-normal text-ink-400">
             grounding {meta.grounding_score?.toFixed(2)}
           </span>
@@ -221,6 +232,11 @@ function AssistantMessage({ msg, onCite }: { msg: ChatMessage; onCite: (id: stri
           <Zap size={11} className="text-amber-glow" />
           grounding {meta?.grounding_score?.toFixed(2) ?? "—"}
         </span>
+        {meta?.exact_citation && (
+          <span className="rounded-full bg-signal/10 px-2 py-1 font-mono text-[10.5px] text-signal">
+            exact citation match
+          </span>
+        )}
         {meta?.timings?.map((t) => (
           <span key={t.stage} className="rounded-full bg-ink-800/50 px-2 py-1 font-mono text-[10.5px] text-ink-500">
             {t.stage} {t.ms >= 1000 ? `${(t.ms / 1000).toFixed(1)}s` : `${Math.round(t.ms)}ms`}
@@ -247,7 +263,13 @@ function AssistantMessage({ msg, onCite }: { msg: ChatMessage; onCite: (id: stri
       </div>
 
       {msg.content ? (
-        <Markdown content={msg.content} onCite={onCite} />
+        <Markdown
+          content={msg.content}
+          onCite={onCite}
+          invalidCitations={meta?.citations?.detail
+            ?.filter((d) => !d.valid)
+            .map((d) => d.citation)}
+        />
       ) : (
         <div className="flex gap-1.5 py-2">
           {[0, 1, 2].map((i) => (
@@ -257,6 +279,26 @@ function AssistantMessage({ msg, onCite }: { msg: ChatMessage; onCite: (id: stri
               style={{ animationDelay: `${i * 0.25}s` }}
             />
           ))}
+        </div>
+      )}
+
+      {meta?.warning && !msg.streaming && (
+        <div className="mt-2.5 rounded-xl border border-danger/25 bg-danger/[0.05] px-3.5 py-2.5">
+          <div className="flex items-center gap-2 text-[12px] font-semibold text-danger">
+            <ShieldAlert size={13} /> {meta.warning}
+          </div>
+          {meta.citations?.detail && meta.citations.detail.some((d) => !d.valid) && (
+            <ul className="mt-1.5 space-y-0.5">
+              {meta.citations.detail
+                .filter((d) => !d.valid)
+                .map((d) => (
+                  <li key={d.citation} className="font-mono text-[11px] text-ink-400">
+                    {d.citation}
+                    {d.reason ? ` — ${d.reason}` : ""}
+                  </li>
+                ))}
+            </ul>
+          )}
         </div>
       )}
 

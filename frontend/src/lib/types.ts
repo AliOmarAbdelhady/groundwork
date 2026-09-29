@@ -12,11 +12,28 @@ export interface StageTiming {
   ms: number;
 }
 
+export interface CitationDetail {
+  citation: string;
+  root: string;
+  subsections: string[];
+  valid: boolean;
+  reason?: string;
+}
+
 export type ChatEvent =
-  | { type: "meta"; query_id: string; grounding_score: number; timings: StageTiming[] }
+  | {
+      type: "meta";
+      query_id: string;
+      grounding_score: number;
+      lexical_overlap?: number;
+      exact_citation?: boolean;
+      rerank_agreement?: number | null;
+      corpus_version?: string;
+      timings: StageTiming[];
+    }
   | { type: "sources"; sources: SourceRef[] }
   | { type: "token"; text: string }
-  | { type: "refused"; reason: string; grounding_score: number }
+  | { type: "refused"; reason: string; grounding_score: number; lexical_overlap?: number }
   | {
       type: "done";
       answer: string;
@@ -27,7 +44,9 @@ export type ChatEvent =
         n_cited: number;
         n_valid: number;
         n_hallucinated: number;
+        detail?: CitationDetail[];
       };
+      warning?: string;
       first_token_ms: number;
       total_ms: number;
     }
@@ -41,7 +60,11 @@ export interface ChatMessage {
     grounding_score: number;
     timings: StageTiming[];
     refused?: boolean;
-    citations?: ChatEvent extends never ? never : { valid: string[]; hallucinated: string[]; n_valid: number; n_hallucinated: number; n_cited: number; cited: string[] };
+    refusal_reason?: string;
+    exact_citation?: boolean;
+    corpus_version?: string;
+    citations?: ChatEvent extends never ? never : { valid: string[]; hallucinated: string[]; n_valid: number; n_hallucinated: number; n_cited: number; cited: string[]; detail?: CitationDetail[] };
+    warning?: string;
     first_token_ms?: number;
     total_ms?: number;
   };
@@ -77,6 +100,7 @@ export interface EvalRun {
   config_name: string;
   retrieval: Record<string, number>;
   answers: Record<string, number> | null;
+  subsection_evidence: number | null;
   refusal_rate_adversarial: number | null;
   answered_rate_golden: number | null;
   n_items: number;
@@ -135,8 +159,16 @@ export interface AppConfig {
     rerank_enabled: boolean;
     final_top_k: number;
     grounding_threshold: number;
+    mmr_enabled?: boolean;
   };
   models: { embed: string; rerank: string; llm_provider: string; gguf: string };
+  corpus?: {
+    version: string;
+    ecfr_issue_date?: string | null;
+    sections?: number;
+    chunks?: number;
+    built_at?: string | null;
+  };
 }
 
 export interface RetrievalConfigOverride {

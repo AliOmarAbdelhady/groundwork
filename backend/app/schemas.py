@@ -109,6 +109,9 @@ class GoldenItem(BaseModel):
     id: str
     question: str
     expected_sections: list[str]  # ground-truth section ids, e.g. "29 CFR 1910.132(b)"
+    # optional: exact statutory subsections that must be locatable in the
+    # retrieved section's text, e.g. ["h", "h2"] for 1910.132(h)(2)
+    expected_subsections: list[str] = Field(default_factory=list)
     source_type: Literal["ecfr", "osha_pdf"] = "ecfr"
     adversarial: bool = False  # out-of-domain / must-refuse
 
@@ -117,6 +120,7 @@ class EvalHit(BaseModel):
     config_name: str
     retrieval: dict[str, float]  # hit@1..hit@10, mrr@10, ndcg@10
     answers: dict[str, float] | None = None  # citation precision/recall, groundedness...
+    subsection_evidence: float | None = None  # cited subsections found in retrieved text
     refusal_rate_adversarial: float | None = None
     answered_rate_golden: float | None = None
     n_items: int = 0

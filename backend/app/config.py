@@ -59,7 +59,7 @@ class Settings(BaseSettings):
 
     # --------------------------------------------------------------- chunking
     child_target_tokens: int = 220   # target size of searchable child chunks
-    child_overlap_tokens: int = 48   # overlap between consecutive children
+    child_overlap_tokens: int = 48   # token budget of trailing overlap between children
     child_min_tokens: int = 32       # shorter sections stay single-chunk
     context_budget_tokens: int = 2400  # max tokens of parent context given to the LLM
 
@@ -85,10 +85,21 @@ class Settings(BaseSettings):
     rrf_sparse_weight: float = 0.35  # weighted RRF: BM25 leg
     rerank_enabled: bool = True
     rerank_model: str = "Xenova/ms-marco-MiniLM-L-6-v2"
-    rerank_top_n: int = 20
+    rerank_top_n: int = 24           # cross-encoder candidate pool size
     final_top_k: int = 6
+    # diversity: MMR over child vectors after rerank, with a per-section cap so
+    # one long section cannot crowd out independent evidence
+    mmr_enabled: bool = True
+    mmr_lambda: float = 0.7
+    max_children_per_section: int = 2
     grounding_threshold: float = 0.52  # below -> refuse (no LLM call; calibrated on golden set)
-    ood_min_overlap: float = 0.06      # lexical overlap floor for domain filter
+    ood_min_overlap: float = 0.06      # hard lexical floor: below this a query is
+                                       # out-of-domain unless it cites an exact section
+    guard_rerank_floor: float = 0.0    # with reranking on, the best candidate must
+                                       # clear this cross-encoder score or the query
+                                       # is refused (near-domain discriminator;
+                                       # calibrated: adversarial max -1.4, golden
+                                       # min +1.5 on the golden set)
 
     # --------------------------------------------------------------- generation
     llm_provider: str = "local"  # local | openai_compatible
@@ -112,7 +123,15 @@ class Settings(BaseSettings):
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
     # ------------------------------------------------------------------- eval
-    eval_hit5_floor: float = 0.70  # CI regression floor
+    # CI regression floors (multi-gate: a config passes only if ALL hold).
+    # Anchored to measured hybrid+rerank performance on the 90-item golden
+    # set (hit@1 0.557 / hit@5 0.914 / nDCG 0.765 / adversarial refusal 0.90 /
+    # answered 1.00) minus a small safety margin.
+    eval_hit1_floor: float = 0.50
+    eval_hit5_floor: float = 0.88
+    eval_ndcg_floor: float = 0.72
+    eval_adversarial_refusal_floor: float = 0.85
+    eval_answered_floor: float = 0.98
 
 
 @lru_cache

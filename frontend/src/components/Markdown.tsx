@@ -20,13 +20,19 @@ function flatten(node: ReactNode): string {
   return "";
 }
 
+const norm = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
+
 export default memo(function Markdown({
   content,
   onCite,
+  invalidCitations,
 }: {
   content: string;
   onCite?: (id: string) => void;
+  /** Raw citation strings that failed evidence validation (rendered in red). */
+  invalidCitations?: string[];
 }) {
+  const invalid = new Set((invalidCitations ?? []).map(norm));
   return (
     <div className="prose-gw text-[14.5px] text-ink-200">
       <ReactMarkdown
@@ -35,11 +41,17 @@ export default memo(function Markdown({
           a({ href, children }) {
             if (href?.startsWith("#cite:")) {
               const id = decodeURIComponent(href.slice(6));
+              const bad = invalid.size > 0 && invalid.has(norm(id));
               return (
                 <button
                   type="button"
                   onClick={() => onCite?.(id)}
-                  className="mx-0.5 inline-flex translate-y-[-1px] items-center rounded-md border border-amber-glow/30 bg-amber-glow/10 px-1.5 py-px font-mono text-[11.5px] font-medium text-amber-glow transition-colors hover:bg-amber-glow/20 hover:border-amber-glow/50"
+                  className={`mx-0.5 inline-flex translate-y-[-1px] items-center rounded-md border px-1.5 py-px font-mono text-[11.5px] font-medium transition-colors ${
+                    bad
+                      ? "border-danger/40 bg-danger/10 text-danger hover:bg-danger/20"
+                      : "border-amber-glow/30 bg-amber-glow/10 text-amber-glow hover:bg-amber-glow/20 hover:border-amber-glow/50"
+                  }`}
+                  title={bad ? "Citation could not be verified against the retrieved text" : undefined}
                 >
                   {flatten(children)}
                 </button>

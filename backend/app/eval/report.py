@@ -1,4 +1,4 @@
-"""Markdown report rendering for eval runs (published as docs/EVALUATION.md)."""
+"""Markdown report rendering for eval runs (published as EVALUATION.md)."""
 
 from __future__ import annotations
 
@@ -24,18 +24,22 @@ def render_markdown(report: EvalReport) -> str:
 
     lines.append("## Retrieval quality (section-level, golden set)")
     lines.append("")
-    header = "| Config | " + " | ".join(_METRICS) + " | Answered | Adversarial refusal |"
+    header = ("| Config | " + " | ".join(_METRICS)
+              + " | Subsection evidence | Answered | Adversarial refusal |")
     lines.append(header)
-    lines.append("|" + "---|" * (len(_METRICS) + 3))
+    lines.append("|" + "---|" * (len(_METRICS) + 4))
     for run in report.runs:
         vals = [f"{run.retrieval.get(m, 0.0):.3f}" if m in run.retrieval else "—"
                 for m in _METRICS]
+        subsec = (f"{run.subsection_evidence:.0%}"
+                  if run.subsection_evidence is not None else "—")
         answered = f"{run.answered_rate_golden:.0%}" if run.answered_rate_golden is not None else "—"
         refusal = (f"{run.refusal_rate_adversarial:.0%}"
                    if run.refusal_rate_adversarial is not None else "—")
         lines.append(
             f"| {_CFG_LABEL.get(run.config_name, run.config_name)} | "
-            + " | ".join(vals) + f" | {answered} | {refusal} |"
+            + " | ".join(vals)
+            + f" | {subsec} | {answered} | {refusal} |"
         )
     lines.append("")
 

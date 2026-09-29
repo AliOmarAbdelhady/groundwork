@@ -19,10 +19,11 @@ import yaml
 from ..config import Settings, get_settings
 from ..obs.logging import get_logger
 from ..rag import citations as cite
+from ..rag.citations import subsection_chain_exists
 from ..rag.generate import build_messages, get_llm
 from ..rag.retrieve import RetrievalPipeline
 from ..schemas import EvalHit, EvalReport, GoldenItem, RetrievalConfig
-from .metrics import aggregate, answer_metrics, retrieval_metrics
+from .metrics import aggregate, answer_metrics, retrieval_metrics, root_sections
 
 log = get_logger(__name__)
 
@@ -64,6 +65,7 @@ def run_eval(
         t0 = time.perf_counter()
         per_retrieval: list[dict[str, float]] = []
         per_answer: list[dict[str, float]] = []
+        per_subsec: list[float] = []
         refusal_adv: list[bool] = []
         answered_gold: list[bool] = []
         per_item: list[dict] = []
@@ -77,6 +79,7 @@ def run_eval(
                 per_item.append({
                     "id": item.id, "adversarial": True, "refused": result.refused,
                     "grounding_score": result.grounding_score,
+                    "lexical_overlap": result.lexical_overlap,
                     "top_retrieved": ranked[:3],
                 })
                 continue
@@ -88,6 +91,20 @@ def run_eval(
                 "expected": item.expected_sections, "retrieved": ranked[:EVAL_TOP_K],
                 **m, "grounding_score": result.grounding_score, "refused": result.refused,
             }
+            # exact-evidence check: cited subsections must exist in the text of
+            # a retrieved expected section (section-level hits can hide a miss
+            # of the decisive exception or threshold clause)
+            if item.expected_subsections:
+                exp_roots = set(root_sections(item.expected_sections))
+                top_secs = root_sections(ranked[:5])
+                text = "\n".join(
+                    sec.text
+                    for sid in top_secs
+                    if sid in exp_roots and (sec := pipeline.sections.get(sid)) is not None
+                )
+                ok = bool(text) and subsection_chain_exists(text, item.expected_subsections)
+                row["subsection_evidence"] = float(ok)
+                per_subsec.append(float(ok))
             answered_gold.append(not result.refused)
 
             if with_answers and llm is not None and not result.refused:
@@ -95,7 +112,10 @@ def run_eval(
                 answer = "".join(
                     llm.stream(messages, max_tokens=settings.llm_max_tokens, temperature=0.0)
                 )
-                info = cite.validate_citations(answer, ranked)
+                # validate against the sections that actually reached the prompt
+                info = cite.validate_citations(
+                    answer, result.context_sections, result.context_section_texts
+                )
                 am = answer_metrics(
                     info,
                     embedder.embed_documents([answer])[0].tolist(),
@@ -113,6 +133,9 @@ def run_eval(
             config_name=name,
             retrieval=aggregate(per_retrieval) if per_retrieval else {},
             answers=aggregate(per_answer) if per_answer else None,
+            subsection_evidence=(
+                round(sum(per_subsec) / len(per_subsec), 4) if per_subsec else None
+            ),
             refusal_rate_adversarial=(
                 round(sum(refusal_adv) / len(refusal_adv), 4) if refusal_adv else None
             ),

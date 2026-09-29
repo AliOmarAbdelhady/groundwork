@@ -46,6 +46,22 @@ class VectorStore:
         )
         return [(p.id, p.score, p.payload or {}) for p in res.points]
 
+    def vectors_for(self, point_ids: list[int]) -> list[list[float] | None]:
+        """Fetch stored vectors by point id (aligned with ``point_ids``)."""
+        if not point_ids:
+            return []
+        out: dict[int, list[float]] = {}
+        for i in range(0, len(point_ids), 64):
+            pts = self.client.retrieve(
+                collection_name=self.settings.qdrant_collection,
+                ids=point_ids[i : i + 64],
+                with_payload=False,
+                with_vectors=True,
+            )
+            for p in pts:
+                out[p.id] = list(p.vector or [])
+        return [out.get(pid) for pid in point_ids]
+
     def count(self) -> int:
         res = self.client.count(self.settings.qdrant_collection, exact=True)
         return res.count

@@ -11,6 +11,7 @@ import time
 from collections.abc import Iterator
 
 from ..config import Settings, get_settings
+from ..manifest import load_index_manifest
 from ..obs.logging import get_logger
 from ..obs.traces import TraceStore
 from ..schemas import (
@@ -57,6 +58,9 @@ class ChatOrchestrator:
         self.settings = settings or get_settings()
         self.pipeline = pipeline or RetrievalPipeline(self.settings)
         self.traces = traces or TraceStore(self.settings.traces_db)
+        self.corpus_version = (
+            load_index_manifest(self.settings).get("corpus_version") or "unknown"
+        )
 
     # ------------------------------------------------------------------ chat
     def stream_chat(
@@ -78,14 +82,28 @@ class ChatOrchestrator:
             "type": "meta",
             "query_id": query_id,
             "grounding_score": result.grounding_score,
+            "lexical_overlap": result.lexical_overlap,
+            "exact_citation": result.exact_citation,
+            "rerank_agreement": result.rerank_agreement,
+            "corpus_version": self.corpus_version,
             "timings": result.timings_ms,
         }
         yield {"type": "sources", "sources": [self._source(h) for h in result.hits]}
 
         conversational = is_conversational(req.query)
         if result.refused and not conversational:
-            yield {"type": "refused", "reason": "low_grounding",
-                   "grounding_score": result.grounding_score}
+            if result.lexical_overlap < self.settings.ood_min_overlap:
+                reason = "out_of_domain"
+            elif (
+                result.rerank_agreement is not None
+                and result.rerank_agreement < self.settings.guard_rerank_floor
+            ):
+                reason = "weak_evidence"
+            else:
+                reason = "low_grounding"
+            yield {"type": "refused", "reason": reason,
+                   "grounding_score": result.grounding_score,
+                   "lexical_overlap": result.lexical_overlap}
             self._record(query_id, req, result, REFUSAL_ANSWER,
                          (time.perf_counter() - t0) * 1000, None)
             return
@@ -118,17 +136,26 @@ class ChatOrchestrator:
             return
 
         answer = "".join(answer_parts)
+        # Validate against the evidence the model actually saw: sections that
+        # survived context packing, with their subsection structure checked.
         validation = cite.validate_citations(
-            answer, [h.section_id for h in result.hits]
+            answer, result.context_sections, result.context_section_texts
         )
         total_ms = (time.perf_counter() - t0) * 1000
-        yield {
+        done_ev: dict = {
             "type": "done",
             "answer": answer,
             "citations": validation,
             "first_token_ms": round(first_token_ms or 0.0, 1),
             "total_ms": round(total_ms, 1),
         }
+        if validation["n_hallucinated"]:
+            # Fail visible: unverified citations are surfaced, never hidden.
+            done_ev["warning"] = (
+                f"{validation['n_hallucinated']} citation(s) could not be "
+                "verified against the retrieved sections"
+            )
+        yield done_ev
         self._record(query_id, req, result, answer, total_ms, first_token_ms)
 
     # ---------------------------------------------------------------- search

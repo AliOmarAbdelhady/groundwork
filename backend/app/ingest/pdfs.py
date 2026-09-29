@@ -69,7 +69,12 @@ def download_pdfs(settings: Settings, force: bool = False) -> list[dict]:
 
 
 def parse_pdfs(settings: Settings, docs: list[dict]) -> Iterator[Section]:
-    """Yield one Section per ~3-page group per document."""
+    """Yield one Section per ~3-page group per document.
+
+    Groups are formed over pages that yield extractable text, but labels keep
+    the ORIGINAL PDF page indices — an empty page still counts toward the
+    numbering, so "pp. 5-8" always means pages 5-8 of the actual PDF.
+    """
     pdf_dir = settings.raw_dir / "osha_pdfs"
     for doc in docs:
         path = pdf_dir / f"{doc['slug']}.pdf"
@@ -77,12 +82,13 @@ def parse_pdfs(settings: Settings, docs: list[dict]) -> Iterator[Section]:
             continue
         try:
             reader = PdfReader(str(path))
-            pages = [_clean_page(p.extract_text() or "") for p in reader.pages]
+            pages = [(i + 1, _clean_page(p.extract_text() or ""))
+                     for i, p in enumerate(reader.pages)]
         except Exception as e:  # noqa: BLE001
             log.warning("pdf_parse_failed", slug=doc["slug"], error=str(e))
             continue
 
-        pages = [p for p in pages if p]
+        pages = [(n, t) for n, t in pages if t]
         if not pages:
             log.warning("pdf_empty_text", slug=doc["slug"])
             continue
@@ -91,7 +97,7 @@ def parse_pdfs(settings: Settings, docs: list[dict]) -> Iterator[Section]:
         doc_no = doc["slug"].removeprefix("OSHA")  # OSHA2254 -> 2254, FS3529 -> FS3529
         for i in range(0, len(pages), _PAGES_PER_SECTION):
             group = pages[i : i + _PAGES_PER_SECTION]
-            first, last = i + 1, i + len(group)
+            first, last = group[0][0], group[-1][0]
             span = f"pp. {first}-{last}" if len(group) > 1 else f"p. {first}"
             yield Section(
                 section_id=f"OSHA {doc_no} ({span})",
@@ -99,6 +105,6 @@ def parse_pdfs(settings: Settings, docs: list[dict]) -> Iterator[Section]:
                 part=f"OSHA-{doc['kind'].upper()}",
                 parent_path=f"OSHA Publications › {doc['title']}",
                 heading=doc["title"],
-                text="\n".join(group),
+                text="\n".join(t for _, t in group),
                 url=url,
             )

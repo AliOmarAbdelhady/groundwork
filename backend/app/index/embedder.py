@@ -25,13 +25,14 @@ _QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 
 
 class EmbeddingService:
-    MODEL_REPO = "Xenova/bge-small-en-v1.5"
     MODEL_FILE = "onnx/model.onnx"
     MAX_LEN = 512
     DIM = 384
 
     def __init__(self, settings: Settings | None = None) -> None:
         self.settings = settings or get_settings()
+        # settings.embed_model is the single source of truth for the dense leg
+        self.model_repo = self.settings.embed_model
         self._lock = threading.Lock()
         self._session = None
         self._tokenizer = None
@@ -47,12 +48,12 @@ class EmbeddingService:
             from tokenizers import Tokenizer
 
             model_path = hf_hub_download(
-                repo_id=self.MODEL_REPO,
+                repo_id=self.model_repo,
                 filename=self.MODEL_FILE,
                 local_dir=str(self.settings.models_dir / "embed"),
             )
             tok_path = hf_hub_download(
-                repo_id=self.MODEL_REPO,
+                repo_id=self.model_repo,
                 filename="tokenizer.json",
                 local_dir=str(self.settings.models_dir / "embed"),
             )

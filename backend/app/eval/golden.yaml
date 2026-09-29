@@ -225,3 +225,110 @@ items:
     question: How do I renew my driver's license in Texas?
     expected_sections: []
     adversarial: true
+  # near-domain traps: adjacent legal domains sharing OSHA vocabulary — the
+  # grounding guard should still refuse these
+  - id: a09
+    question: How much paid sick leave are employees entitled to under federal law?
+    expected_sections: []
+    adversarial: true
+  - id: a10
+    question: What are the EPA reporting requirements for pesticide applications on farms?
+    expected_sections: []
+    adversarial: true
+  - id: a11
+    question: How many hours can a commercial truck driver drive before mandatory rest under DOT hours-of-service rules?
+    expected_sections: []
+    adversarial: true
+  - id: a12
+    question: What building code requirements apply to fire sprinklers in a new warehouse?
+    expected_sections: []
+    adversarial: true
+  - id: a13
+    question: How do I file a workers' compensation claim for a workplace injury in Texas?
+    expected_sections: []
+    adversarial: true
+  - id: a14
+    question: What is the maximum allowable radon level in a residential home?
+    expected_sections: []
+    adversarial: true
+  - id: a15
+    question: Can my employer monitor my personal emails under federal privacy law?
+    expected_sections: []
+    adversarial: true
+  - id: a16
+    question: What are MSHA's initial training requirements for new miners?
+    expected_sections: []
+    adversarial: true
+  - id: a17
+    question: How much parental leave does the Family and Medical Leave Act provide?
+    expected_sections: []
+    adversarial: true
+  - id: a18
+    question: What are the FCC licensing rules for two-way radios at a job site?
+    expected_sections: []
+    adversarial: true
+  - id: a19
+    question: Does the Clean Air Act require permits for diesel generators on construction sites?
+    expected_sections: []
+    adversarial: true
+  - id: a20
+    question: What safety certifications does a daycare playground need for children's equipment?
+    expected_sections: []
+    adversarial: true
+  # ------------------------------------------------- hard in-domain: exact
+  # clauses, exceptions, and payment/recordkeeping details; several carry
+  # expected_subsections — the decisive clause must be locatable in the
+  # retrieved section's text, not merely the right section root
+  - id: g57
+    question: At what sound exposure level must employers use engineering controls for noise?
+    expected_sections: ["29 CFR 1910.95"]
+    expected_subsections: ["b", "1"]
+  - id: g58
+    question: What is the eight-hour permissible exposure limit for asbestos?
+    expected_sections: ["29 CFR 1910.1001"]
+    expected_subsections: ["c", "1"]
+  - id: g59
+    question: Does the lockout/tagout standard apply to minor tool changes and adjustments during production?
+    expected_sections: ["29 CFR 1910.147"]
+    expected_subsections: ["a", "2"]
+  - id: g60
+    question: Can an employer charge an employee for required non-specialty protective equipment like hard hats?
+    expected_sections: ["29 CFR 1910.132", "OSHA 3151"]
+    expected_subsections: ["h"]
+  - id: g61
+    question: When is an employer required to develop a written permit-required confined space program?
+    expected_sections: ["29 CFR 1910.146"]
+    expected_subsections: ["c"]
+  - id: g62
+    question: What training and evaluation must powered industrial truck operators receive?
+    expected_sections: ["29 CFR 1910.178"]
+    expected_subsections: ["l"]
+  - id: g63
+    question: Are employers with ten or fewer employees exempt from routine OSHA injury recordkeeping?
+    expected_sections: ["29 CFR 1904.1"]
+    expected_subsections: ["1"]
+  - id: g64
+    question: At what working height does fall protection become required in construction?
+    expected_sections: ["29 CFR 1926.501", "OSHA 3146"]
+    expected_subsections: ["b", "1"]
+  - id: g65
+    question: What information must appear on labels of shipped containers under the hazard communication standard?
+    expected_sections: ["29 CFR 1910.1200"]
+    expected_subsections: ["f"]
+  - id: g66
+    question: How many exit routes must a workplace have, and when may they be locked?
+    expected_sections: ["29 CFR 1910.36"]
+  - id: g67
+    question: What is the OSHA 300 log and how quickly must fatalities be reported?
+    expected_sections: ["29 CFR 1904.29", "29 CFR 1904.39"]
+  - id: g68
+    question: What hepatitis B vaccination requirements apply after an occupational exposure incident?
+    expected_sections: ["29 CFR 1910.1030"]
+    expected_subsections: ["f"]
+  - id: g69
+    question: When must a scaffold and its components be inspected by a competent person?
+    expected_sections: ["29 CFR 1926.451"]
+    expected_subsections: ["f", "3"]
+  - id: g70
+    question: What fire extinguisher provision requirements apply to general industry employers?
+    expected_sections: ["29 CFR 1910.157"]

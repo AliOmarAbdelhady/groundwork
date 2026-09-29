@@ -57,9 +57,12 @@ app.add_middleware(
 
 @app.get("/health")
 def health() -> dict:
+    from .manifest import load_index_manifest
+
     return {
         "status": "ok",
         "llm_provider": settings.llm_provider,
+        "corpus_version": load_index_manifest().get("corpus_version", "unknown"),
         "indexes": _index_status(),
     }
 
@@ -183,6 +186,9 @@ def eval_latest_detail() -> dict:
 
 @app.get("/api/config")
 def get_config() -> dict:
+    from .manifest import load_index_manifest
+
+    idx = load_index_manifest()
     return {
         "retrieval_defaults": {
             "dense_top_k": settings.dense_top_k,
@@ -191,6 +197,7 @@ def get_config() -> dict:
             "rerank_enabled": settings.rerank_enabled,
             "final_top_k": settings.final_top_k,
             "grounding_threshold": settings.grounding_threshold,
+            "mmr_enabled": settings.mmr_enabled,
         },
         "models": {
             "embed": settings.embed_model,
@@ -199,6 +206,13 @@ def get_config() -> dict:
             "gguf": f"{settings.gguf_repo_id}/{settings.gguf_filename}"
             if settings.llm_provider == "local"
             else settings.openai_model,
+        },
+        "corpus": {
+            "version": idx.get("corpus_version", "unknown"),
+            "ecfr_issue_date": idx.get("ecfr_issue_date"),
+            "sections": idx.get("sections"),
+            "chunks": idx.get("chunks"),
+            "built_at": idx.get("built_at"),
         },
     }
 
