@@ -133,6 +133,12 @@ class TestCitations:
         # (1) under (c) must not validate a (b)(1) claim
         assert not subsection_chain_exists("(c) something (1) inside.", ["b", "1"])
 
+    def test_prose_osha_words_are_not_citations(self):
+        assert extract_citations("Ask me an OSHA question about workplace safety.") == []
+        assert extract_citations("See the OSHA 3146 booklet and OSHA FS-INSPECTIONS.") == [
+            "OSHA 3146", "OSHA FS-INSPECTIONS",
+        ]
+
 
 class TestOverlap:
     def test_overlap_tail_meets_token_budget(self):

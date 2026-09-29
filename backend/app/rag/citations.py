@@ -98,7 +98,12 @@ def parse_citation_refs(text: str) -> list[CitationRef]:
         body, subs = _split_subsections(m.group(1))
         add(CitationRef(raw=m.group(0), root=f"29 CFR {body}", subsections=subs))
     for m in _OSHA_DOC.finditer(text):
-        doc = m.group(1).upper()
+        doc = m.group(1)
+        # "OSHA question"-style prose is not a publication number: a doc id
+        # carries a digit or is written all-caps (e.g. FS-INSPECTIONS)
+        if not any(c.isdigit() for c in doc) and any(c.islower() for c in doc):
+            continue
+        doc = doc.upper()
         pages: tuple[int, int] | None = None
         if m.group(2):
             lo = int(m.group(2))

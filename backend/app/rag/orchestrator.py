@@ -138,9 +138,17 @@ class ChatOrchestrator:
         answer = "".join(answer_parts)
         # Validate against the evidence the model actually saw: sections that
         # survived context packing, with their subsection structure checked.
-        validation = cite.validate_citations(
-            answer, result.context_sections, result.context_section_texts
-        )
+        # Conversational turns carry no regulatory claims — skip validation
+        # so prose like "an OSHA question" is never counted as a citation.
+        if conversational:
+            validation: dict = {
+                "cited": [], "valid": [], "hallucinated": [],
+                "n_cited": 0, "n_valid": 0, "n_hallucinated": 0, "detail": [],
+            }
+        else:
+            validation = cite.validate_citations(
+                answer, result.context_sections, result.context_section_texts
+            )
         total_ms = (time.perf_counter() - t0) * 1000
         done_ev: dict = {
             "type": "done",
