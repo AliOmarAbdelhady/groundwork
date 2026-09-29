@@ -200,7 +200,7 @@ function PerItemTable({ rep }: { rep: EvalReport }) {
               <td className="max-w-[320px] truncate px-3 py-2">
                 {it.adversarial ? (
                   <span className={it.refused ? "text-signal" : "text-danger"}>
-                    🛡 {it.refused ? "refused (correct)" : "answered (should refuse!)"}
+                    {it.refused ? "refused (correct)" : "answered (should refuse)"}
                   </span>
                 ) : (
                   it.question ?? ""

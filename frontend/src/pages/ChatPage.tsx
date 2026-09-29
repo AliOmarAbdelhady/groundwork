@@ -106,11 +106,11 @@ export default function ChatPage() {
             },
           }));
         } else if (ev.type === "error") {
-          patch((m) => ({ ...m, content: `⚠️ ${ev.detail}` }));
+          patch((m) => ({ ...m, content: `Error: ${ev.detail}` }));
         }
       });
     } catch (e) {
-      patch((m) => ({ ...m, content: `⚠️ connection failed: ${String(e)}` }));
+      patch((m) => ({ ...m, content: `Connection failed: ${String(e)}` }));
     } finally {
       patch((m) => ({ ...m, streaming: false }));
       setBusy(false);
