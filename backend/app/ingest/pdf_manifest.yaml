@@ -1,0 +1,125 @@
+# Curated, URL-verified OSHA publications manifest (English only).
+# Verified against osha.gov on 2026-09-28 (HTTP 200 + valid PDF + title extracted
+# from first-page text). Documents are U.S. government works (public domain).
+
+documents:
+  - slug: OSHA2254
+    title: Training Requirements in OSHA Standards
+    url: https://www.osha.gov/sites/default/files/publications/OSHA2254.pdf
+    kind: booklet
+  - slug: OSHA3000
+    title: Employer Rights and Responsibilities Following a Federal OSHA Inspection
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3000.pdf
+    kind: booklet
+  - slug: OSHA3021
+    title: Workers' Rights
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3021.pdf
+    kind: booklet
+  - slug: OSHA3071
+    title: Job Hazard Analysis
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3071.pdf
+    kind: booklet
+  - slug: OSHA3120
+    title: Control of Hazardous Energy (Lockout/Tagout)
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3120.pdf
+    kind: booklet
+  - slug: OSHA3146
+    title: Fall Protection in Construction
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3146.pdf
+    kind: booklet
+  - slug: OSHA3151
+    title: Personal Protective Equipment
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3151.pdf
+    kind: booklet
+  - slug: OSHA3160
+    title: Best Practices for Non-Health Care Employers with On-site Health Care Services
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3160.pdf
+    kind: booklet
+  - slug: OSHA3249
+    title: Best Practices for Hospital-Based First Receivers of Victims from Mass Casualty Incidents
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3249.pdf
+    kind: booklet
+  - slug: OSHA3844
+    title: Hazard Communication Standard — GHS Alignment Guidance
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3844.pdf
+    kind: booklet
+  - slug: OSHA3885
+    title: Recommended Practices for Safety and Health Programs
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3885.pdf
+    kind: booklet
+  - slug: OSHA3886
+    title: Recommended Practices for Safety and Health Programs in Construction
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3886.pdf
+    kind: booklet
+  - slug: OSHA3165
+    title: Job Safety and Health — It's the Law (Worker Rights Poster)
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3165.pdf
+    kind: poster
+  - slug: OSHA3439
+    title: Job Safety and Health At-a-Glance (Rights and Responsibilities)
+    url: https://www.osha.gov/sites/default/files/publications/3439at-a-glance.pdf
+    kind: quickcard
+  - slug: OSHA3491
+    title: Hazard Communication — Pictograms QuickCard
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3491QuickCardPictogram.pdf
+    kind: quickcard
+  - slug: OSHA3492
+    title: Hazard Communication — Labels QuickCard
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3492QuickCardLabel.pdf
+    kind: quickcard
+  - slug: OSHA3493
+    title: Hazard Communication — Safety Data Sheets QuickCard
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3493QuickCardSafetyDataSheet.pdf
+    kind: quickcard
+  - slug: OSHA3154
+    title: Heat Illness — Protecting Workers QuickCard
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3154.pdf
+    kind: quickcard
+  - slug: OSHA3768
+    title: Hazard Alert — Worker Exposure to Silica during Countertop Fabrication
+    url: https://www.osha.gov/sites/default/files/publications/OSHA3768.pdf
+    kind: hazard-alert
+  - slug: OSHA4518
+    title: Hazard Alert — Oil Field Tank Batteries (Flare Flash Fire Explosion Prevention)
+    url: https://www.osha.gov/sites/default/files/publications/OSHA4518.pdf
+    kind: hazard-alert
+  - slug: OSHA4480
+    title: Lithium-ion Battery Safety
+    url: https://www.osha.gov/sites/default/files/publications/OSHA4480.pdf
+    kind: factsheet
+  - slug: OSHA4497
+    title: Safety Champions — An OSHA Cooperative Program
+    url: https://www.osha.gov/sites/default/files/publications/OSHA4497.pdf
+    kind: factsheet
+  - slug: OSHA4498
+    title: Responding to OSHA Inquiries on Complaints and Referrals
+    url: https://www.osha.gov/sites/default/files/publications/OSHA4498.pdf
+    kind: factsheet
+  - slug: OSHA4504
+    title: Hepatitis B Vaccination Protection
+    url: https://www.osha.gov/sites/default/files/publications/OSHA4504.pdf
+    kind: factsheet
+  - slug: OSHA4506
+    title: Heat-Related Illnesses and First Aid
+    url: https://www.osha.gov/sites/default/files/publications/OSHA4506.pdf
+    kind: factsheet
+  - slug: OSHA4508
+    title: Recommended Practices for Anti-Retaliation Programs
+    url: https://www.osha.gov/sites/default/files/publications/OSHA4508.pdf
+    kind: factsheet
+  - slug: OSHA4519
+    title: Opioid Overdose Rescue with Reversal Medications
+    url: https://www.osha.gov/sites/default/files/publications/OSHA4519.pdf
+    kind: factsheet
+  - slug: FS3529
+    title: Lockout/Tagout — Control of Hazardous Energy (Fact Sheet)
+    url: https://www.osha.gov/sites/default/files/publications/OSHAFS3529.pdf
+    kind: factsheet
+  - slug: FS-INSPECTIONS
+    title: OSHA Inspections (Fact Sheet)
+    url: https://www.osha.gov/sites/default/files/publications/factsheet-inspections.pdf
+    kind: factsheet
+  - slug: FS-FALLS
+    title: Falls in Construction — Work Safely Use the Right Equipment (Fact Sheet)
+    url: https://www.osha.gov/sites/default/files/publications/factsheet.pdf
+    kind: factsheet

@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-ink-950: #07090d;
+  --color-ink-900: #0b0f16;
+  --color-ink-850: #0f141d;
+  --color-ink-800: #141b26;
+  --color-ink-700: #1c2534;
+  --color-ink-600: #2a3648;
+  --color-ink-500: #46566e;
+  --color-ink-400: #6b7c95;
+  --color-ink-300: #93a3b8;
+  --color-ink-200: #c3cedd;
+
+  --color-amber-glow: #f5a524;
+  --color-ember: #fb7822;
+  --color-signal: #35d0ba;
+  --color-sky-info: #55b8ff;
+  --color-danger: #f4586e;
+
+  --animate-fade-up: fade-up 0.35s ease-out both;
+  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+html, body, #root { height: 100%; }
+body {
+  background: var(--color-ink-950);
+  color: var(--color-ink-200);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: rgba(245, 165, 36, 0.3); }
+
+/* subtle scrollbars */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--color-ink-700); border-radius: 8px; border: 2px solid var(--color-ink-950); }
+*::-webkit-scrollbar-thumb:hover { background: var(--color-ink-600); }
+
+.hazard-stripe {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(245, 165, 36, 0.85) 0 10px,
+    rgba(11, 15, 22, 0.9) 10px 20px
+  );
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(20, 27, 38, 0.72), rgba(11, 15, 22, 0.85));
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-ink-700);
+}
+
+.prose-gw h1, .prose-gw h2, .prose-gw h3 { font-family: var(--font-display); color: #e8edf5; font-weight: 600; margin: 0.8em 0 0.35em; }
+.prose-gw h1 { font-size: 1.25rem; }
+.prose-gw h2 { font-size: 1.12rem; }
+.prose-gw h3 { font-size: 1rem; }
+.prose-gw p { margin: 0.45em 0; line-height: 1.65; }
+.prose-gw ul, .prose-gw ol { margin: 0.45em 0 0.45em 1.2em; }
+.prose-gw li { margin: 0.22em 0; line-height: 1.6; list-style: disc; }
+.prose-gw ol li { list-style: decimal; }
+.prose-gw strong { color: #f2f6fb; font-weight: 600; }
+.prose-gw code { font-family: var(--font-mono); font-size: 0.85em; background: rgba(42, 54, 72, 0.55); padding: 0.1em 0.4em; border-radius: 4px; }
+.prose-gw blockquote { border-left: 3px solid var(--color-ink-600); padding-left: 0.9em; color: var(--color-ink-300); margin: 0.5em 0; }

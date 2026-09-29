@@ -1,0 +1,23 @@
+# python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# data & models (heavy artifacts)
+data/
+models/
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+
+# env
+.env
+
+# misc
+*.log
+.DS_Store
+nohup.out

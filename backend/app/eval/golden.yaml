@@ -1,0 +1,227 @@
+# GroundWork golden evaluation dataset.
+# Authored against the real corpus (data/processed/sections.jsonl, eCFR issue
+# 2026-09-24 + curated OSHA publications). Each in-domain item carries one or
+# more ground-truth section roots; metrics are computed at section level.
+# `adversarial: true` items are out-of-domain — the system should REFUSE them.
+
+items:
+  # ---------------------------------------------------------------- eCFR 1910
+  - id: g01
+    question: Who is responsible for paying for personal protective equipment like hard hats and safety glasses — the employer or the employee?
+    expected_sections: ["29 CFR 1910.132", "29 CFR 1926.95"]
+  - id: g02
+    question: At what noise exposure level does OSHA require a hearing conservation program for workers?
+    expected_sections: ["29 CFR 1910.95"]
+  - id: g03
+    question: What are the requirements for a lockout/tagout energy control program?
+    expected_sections: ["29 CFR 1910.147"]
+  - id: g04
+    question: How often must periodic inspections of energy control procedures be performed under lockout/tagout?
+    expected_sections: ["29 CFR 1910.147"]
+  - id: g05
+    question: What is required before a worker gets a medical evaluation for respirator use?
+    expected_sections: ["29 CFR 1910.134"]
+  - id: g06
+    question: Does OSHA require a written respiratory protection program, and what must it include?
+    expected_sections: ["29 CFR 1910.134"]
+  - id: g07
+    question: Does the hazard communication standard require a written hazard communication program?
+    expected_sections: ["29 CFR 1910.1200"]
+  - id: g08
+    question: What are the requirements for labels on shipped containers of hazardous chemicals?
+    expected_sections: ["29 CFR 1910.1200"]
+  - id: g09
+    question: What is a permit-required confined space and what are the entry requirements?
+    expected_sections: ["29 CFR 1910.146"]
+  - id: g10
+    question: What are the general requirements for machine guarding on machinery?
+    expected_sections: ["29 CFR 1910.212"]
+  - id: g11
+    question: What must an employer do after a worker is exposed to blood or other potentially infectious materials?
+    expected_sections: ["29 CFR 1910.1030"]
+  - id: g12
+    question: Who must receive training before operating a forklift (powered industrial truck)?
+    expected_sections: ["29 CFR 1910.178"]
+  - id: g13
+    question: How often must forklift operators be evaluated?
+    expected_sections: ["29 CFR 1910.178"]
+  - id: g14
+    question: What are the minimum elements of an emergency action plan?
+    expected_sections: ["29 CFR 1910.38"]
+  - id: g15
+    question: What are the design and construction requirements for exit routes in a workplace?
+    expected_sections: ["29 CFR 1910.36"]
+  - id: g16
+    question: What is the permissible exposure limit for air contaminants like carbon monoxide?
+    expected_sections: ["29 CFR 1910.1000"]
+  - id: g17
+    question: What fire watch and hot work precautions are required for welding?
+    expected_sections: ["29 CFR 1910.252"]
+  - id: g18
+    question: What safety requirements apply to grain handling facilities like grain elevators?
+    expected_sections: ["29 CFR 1910.272"]
+  - id: g19
+    question: When is fall protection required in general industry, for example on elevated runways or platforms?
+    expected_sections: ["29 CFR 1910.28"]
+  - id: g20
+    question: What are the requirements for eye and face protection?
+    expected_sections: ["29 CFR 1910.133"]
+  - id: g21
+    question: When is foot protection required for workers?
+    expected_sections: ["29 CFR 1910.136"]
+  - id: g22
+    question: When are employees required to wear protective helmets (hard hats)?
+    expected_sections: ["29 CFR 1910.135"]
+  - id: g23
+    question: Where are portable fire extinguishers required to be placed and how often must they be inspected?
+    expected_sections: ["29 CFR 1910.157"]
+  - id: g24
+    question: What training must employers provide employees when they use PPE?
+    expected_sections: ["29 CFR 1910.132"]
+  - id: g25
+    question: What are the requirements for controlling asbestos exposure in the workplace?
+    expected_sections: ["29 CFR 1910.1001"]
+  - id: g26
+    question: What is the OSHA standard for lead exposure in construction work?
+    expected_sections: ["29 CFR 1926.62"]
+    source_type: ecfr
+  - id: g27
+    question: What does process safety management require for highly hazardous chemicals?
+    expected_sections: ["29 CFR 1910.119"]
+  - id: g28
+    question: How must flammable liquids be stored and handled in the workplace?
+    expected_sections: ["29 CFR 1910.106"]
+  - id: g29
+    question: How long must employee exposure and medical records be retained?
+    expected_sections: ["29 CFR 1910.1020"]
+  - id: g30
+    question: What sanitation facilities must an employer provide, like toilets and washing areas?
+    expected_sections: ["29 CFR 1910.141"]
+
+  # ---------------------------------------------------------------- eCFR 1926
+  - id: g31
+    question: At what height do construction workers need fall protection?
+    expected_sections: ["29 CFR 1926.501", "OSHA 3146"]
+  - id: g32
+    question: What are the criteria for guardrail systems on construction sites?
+    expected_sections: ["29 CFR 1926.502"]
+  - id: g33
+    question: What fall protection training must construction workers receive?
+    expected_sections: ["29 CFR 1926.503"]
+  - id: g34
+    question: What are the general scaffold requirements for construction?
+    expected_sections: ["29 CFR 1926.451"]
+  - id: g35
+    question: What protective systems are required for trenching and excavation work?
+    expected_sections: ["29 CFR 1926.652"]
+  - id: g36
+    question: What are the requirements for ladders on construction sites?
+    expected_sections: ["29 CFR 1926.1053"]
+  - id: g37
+    question: What training and certification is required for crane operators?
+    expected_sections: ["29 CFR 1926.1427"]
+  - id: g38
+    question: What qualifications must a signal person have for crane operations?
+    expected_sections: ["29 CFR 1926.1428"]
+  - id: g39
+    question: Does the hazard communication rule also apply to construction sites?
+    expected_sections: ["29 CFR 1926.59"]
+  - id: g40
+    question: What head protection is required on construction sites?
+    expected_sections: ["29 CFR 1926.100"]
+  - id: g41
+    question: What are the sanitation requirements for construction sites?
+    expected_sections: ["29 CFR 1926.51"]
+
+  # ---------------------------------------------------------------- eCFR 1900s
+  - id: g42
+    question: How quickly must an employer report a workplace fatality to OSHA?
+    expected_sections: ["29 CFR 1904.39"]
+  - id: g43
+    question: What work-related injuries must be recorded on the OSHA 300 log?
+    expected_sections: ["29 CFR 1904.7"]
+  - id: g44
+    question: Is the OSHA poster required to be displayed at the workplace?
+    expected_sections: ["29 CFR 1903.2"]
+  - id: g45
+    question: Can an employer retaliate against a worker for reporting an injury?
+    expected_sections: ["29 CFR 1904.36", "29 CFR 1904.35"]
+  - id: g46
+    question: What is the annual summary requirement for injury records?
+    expected_sections: ["29 CFR 1904.32"]
+
+  # ----------------------------------------------------------- OSHA PDF docs
+  - id: p01
+    question: What are the symptoms and first aid steps for heat stroke?
+    expected_sections: ["OSHA 4506"]
+    source_type: osha_pdf
+  - id: p02
+    question: What hazards do lithium-ion batteries pose at work?
+    expected_sections: ["OSHA 4480"]
+    source_type: osha_pdf
+  - id: p03
+    question: What do the hazard communication pictograms on chemical labels mean?
+    expected_sections: ["OSHA 3491"]
+    source_type: osha_pdf
+  - id: p04
+    question: When must employers offer the hepatitis B vaccine to workers?
+    expected_sections: ["OSHA 4504"]
+    source_type: osha_pdf
+  - id: p05
+    question: How do I do a job hazard analysis at my workplace?
+    expected_sections: ["OSHA 3071"]
+    source_type: osha_pdf
+  - id: p06
+    question: What rights do workers have under OSHA?
+    expected_sections: ["OSHA 3021", "OSHA 3165"]
+    source_type: osha_pdf
+  - id: p07
+    question: What are recommended practices for safety and health programs?
+    expected_sections: ["OSHA 3885"]
+    source_type: osha_pdf
+  - id: p08
+    question: How can I protect myself from falls when doing roofing work?
+    expected_sections: ["OSHA 3146"]
+    source_type: osha_pdf
+  - id: p09
+    question: What is a safety data sheet and what information does it contain?
+    expected_sections: ["OSHA 3493"]
+    source_type: osha_pdf
+  - id: p10
+    question: What happens during an OSHA inspection of my workplace?
+    expected_sections: ["OSHA 3000", "OSHA FS-INSPECTIONS"]
+    source_type: osha_pdf
+
+  # -------------------------------------------------------------- adversarial
+  - id: a01
+    question: What is the capital of France?
+    expected_sections: []
+    adversarial: true
+  - id: a02
+    question: How do I file my federal income tax return?
+    expected_sections: []
+    adversarial: true
+  - id: a03
+    question: What is the minimum wage in California?
+    expected_sections: []
+    adversarial: true
+  - id: a04
+    question: Give me a good recipe for chicken soup.
+    expected_sections: []
+    adversarial: true
+  - id: a05
+    question: How do I register a drone with the FAA?
+    expected_sections: []
+    adversarial: true
+  - id: a06
+    question: Who won the last Super Bowl?
+    expected_sections: []
+    adversarial: true
+  - id: a07
+    question: What are the visa requirements for studying in Germany?
+    expected_sections: []
+    adversarial: true
+  - id: a08
+    question: How do I renew my driver's license in Texas?
+    expected_sections: []
+    adversarial: true

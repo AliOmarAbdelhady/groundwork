@@ -1,0 +1,31 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports: ["6333:6333"]
+    volumes: [qdrant_data:/qdrant/storage]
+
+  api:
+    build: { context: ., dockerfile: docker/Dockerfile }
+    ports: ["8000:8000"]
+    environment:
+      GW_QDRANT_URL: http://qdrant:6333
+      GW_LLM_PROVIDER: ${GW_LLM_PROVIDER:-local}
+      GW_OPENAI_BASE_URL: ${GW_OPENAI_BASE_URL:-}
+      GW_OPENAI_API_KEY: ${GW_OPENAI_API_KEY:-}
+      GW_OPENAI_MODEL: ${GW_OPENAI_MODEL:-}
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    depends_on: [qdrant]
+
+  frontend:
+    image: node:22-slim
+    working_dir: /web
+    command: sh -c "npm install && npm run build && npx vite preview --host 0.0.0.0 --port 5173"
+    ports: ["5173:5173"]
+    environment:
+      VITE_API_BASE: http://localhost:8000
+    volumes: [./frontend:/web]
+
+volumes:
+  qdrant_data:

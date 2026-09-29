@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push: { branches: [main] }
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with: { python-version: "3.12" }
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv pip install -p .venv -e . || uv pip install -p .venv .
+          uv pip install -p .venv pytest pytest-asyncio ruff
+
+      - name: Lint
+        run: .venv/bin/python -m ruff check backend
+
+      - name: Unit tests
+        run: PYTHONPATH=backend .venv/bin/python -m pytest backend/tests/test_unit.py -q
+
+      - name: Ingest + index (real public data)
+        run: |
+          PYTHONPATH=backend .venv/bin/python -m app.cli ingest
+          PYTHONPATH=backend .venv/bin/python -m app.cli index
+
+      - name: Integration tests (incl. retrieval regression floor)
+        run: PYTHONPATH=backend .venv/bin/python -m pytest backend/tests/test_integration.py -q
+
+      - name: Retrieval eval (golden set)
+        run: PYTHONPATH=backend .venv/bin/python -m app.cli eval --json
